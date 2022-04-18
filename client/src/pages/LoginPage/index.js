@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Formik, Field, ErrorMessage, Form } from 'formik';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 const LogIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const user = useSelector(state => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log(user);
+  });
 
   const handelSubmit = e => {
     e.preventDefault();
-    console.log(e.target);
+    dispatch({ type: 'ADD_USER_AUTH', payload: { email: e.target.email.value, password: e.target.password.value } });
+
+    <Navigate to="/events"></Navigate>;
   };
 
   return (
@@ -27,6 +36,7 @@ const LogIn = () => {
             value={password}
             className="mb-6 px-2 py-2"
             placeholder="Enter Your Password"
+            name="password"
             onChange={e => setPassword(e.password)}
           ></input>
           <button type="submit" className="bg-blue-400 px-3 py-2 mt-6 mb-2">

@@ -1,11 +1,17 @@
 import express from 'express';
+import { handelRoute } from './api';
+import config from './config';
+import { errorHandler } from './shared/middlewares/errorHandling';
 
-const app=express();
+const startServer = () => {
+  const app = express();
+  app.use(express.json());
+  app.use(errorHandler);
+  app.use('/', handelRoute());
 
-app.get("/",(req,res)=>{
-    res.send("HII");
-})
+  app.listen(config.port, () => {
+    console.log(`Listening on ${config.port}`);
+  });
+};
 
-app.listen(5000,()=>{
-    console.log("listening");
-})
+startServer();
