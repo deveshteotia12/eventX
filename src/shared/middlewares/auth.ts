@@ -4,7 +4,9 @@ import errorClass from '../errorClass';
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const authHeader = req.headers.authorizaton;
+    console.log(req.headers);
+    const authHeader = req.headers.authorization;
+    console.log(authHeader);
     const token = authHeader && authHeader.split(' ')[1];
     if (token === null) throw Error('Invalid Request');
     const payload = await verifyJWT(token);

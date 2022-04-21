@@ -1,7 +1,17 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Nav = ({ version }) => {
+  const user = useSelector(state => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handelLogout = () => {
+    localStorage.removeItem('userToken');
+    dispatch({ type: 'ADD_USER_AUTH', user: null });
+    navigate('/login');
+  };
+
   return (
     <div>
       {version == true ? (
@@ -11,9 +21,15 @@ const Nav = ({ version }) => {
               EventX{' '}
             </Link>
             <h1 className="font-bold text-xl"> EVENTS</h1>
-            <Link to="/login" className="text-blue-400 font-bold px-2 py-3">
-              Log In
-            </Link>
+            {user == null ? (
+              <Link to="/login" className="text-blue-400 font-bold px-2 py-3">
+                Log In
+              </Link>
+            ) : (
+              <button onClick={() => handelLogout()} className="text-blue-400 font-bold px-2 py-3">
+                Log out
+              </button>
+            )}
           </div>
         </div>
       ) : (

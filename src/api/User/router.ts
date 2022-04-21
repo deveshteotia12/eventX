@@ -1,20 +1,26 @@
 import { Request, Response, Router, NextFunction } from 'express';
-import { loginHandler, signUpHandler } from './controller';
+import { allEventHandler, eventReqHandler, loginHandler, signUpHandler } from './controller';
 import { validation } from '../../shared/middlewares/validation';
-import { loginSchema, signUpSchema } from './schema';
+import { eventRequest, loginSchema, signUpSchema } from './schema';
+import errorClass from '../../shared/errorClass';
+import { authMiddleware } from '../../shared/middlewares/auth';
 
 export const userRoute = () => {
   const app = Router();
   app.post('/login', validation(loginSchema), handelLogin);
   app.post('/SignUp', validation(signUpSchema), handelSignUp);
+  app.post('/eventReq', validation(eventRequest), authMiddleware, handelEvent);
+  app.get('/allEvents', authMiddleware, handelAllEvent);
+  return app;
 };
 
 const handelLogin = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = await loginHandler(req.body, next);
-    res.json({ success: true, msg: 'Successfully authenticated' });
+    console.log('I am here');
+    const data = await loginHandler(req.body, next);
+    res.json({ success: true, data });
   } catch (error) {
-    res.json({ success: false, msg: 'some error has occured' });
+    next(new errorClass(error.message, error.code));
   }
 };
 
@@ -23,7 +29,26 @@ const handelSignUp = async (req: Request, res: Response, next: NextFunction) => 
     await signUpHandler(req.body, next);
     res.json({ success: true, msg: 'User Successfully Signed Up' });
   } catch (error) {
+    next(new errorClass(error.message, error.code));
+  }
+};
+
+const handelEvent = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await eventReqHandler(req.body, req.user.email);
+    res.json({ success: true, msg: 'Event Req Saved Successfully' });
+  } catch (error) {
     console.log(error);
-    res.josn({ success: false, msg: 'some failure has occured' });
+    next(new errorClass(error.message, error.code));
+  }
+};
+
+const handelAllEvent = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await allEventHandler();
+    res.json({ success: true, data });
+  } catch (error) {
+    console.log(error);
+    next(new errorClass(error.message, error.code));
   }
 };

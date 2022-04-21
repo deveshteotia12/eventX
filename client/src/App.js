@@ -8,12 +8,16 @@ import SignUp from './pages/SignupPage';
 import { Routes, Route, useNavigate, Link } from 'react-router-dom';
 import LogIn from './pages/LoginPage';
 import EventsMain from './pages/EventsMainPage';
+import OrganizePage from './pages/OrganizeEvent';
 import { useSelector } from 'react-redux';
-import { DasboardPrivateRoute } from './components/PrivateRoutes';
+import { DasboardPrivateRoute, OrganizeEventPrivate } from './components/PrivateRoutes';
+import AdminDashReq from './pages/adminDashboard';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
-    <div className="w-screen">
+    <>
       <Routes>
         <Route path="/" element={<Homepage></Homepage>}></Route>
         <Route path="/signup" element={<SignUp></SignUp>}></Route>
@@ -21,8 +25,13 @@ const App = () => {
         <Route path="/" element={<DasboardPrivateRoute></DasboardPrivateRoute>}>
           <Route path="/events" element={<EventsMain></EventsMain>}></Route>
         </Route>
+        <Route path="/" element={<OrganizeEventPrivate></OrganizeEventPrivate>}>
+          <Route path="/organizeEvent" element={<OrganizePage></OrganizePage>}></Route>
+        </Route>
+        <Route path="/adminDash" element={<AdminDashReq></AdminDashReq>}></Route>
       </Routes>
-    </div>
+      <ToastContainer></ToastContainer>
+    </>
   );
 };
 
